@@ -1,5 +1,9 @@
 import { Request, Response } from "express";
 import { getPool } from "../database";
+const STATUS_FLOW: Record<string, string> = {
+  Assigned: "In-Progress",
+  "In-Progress": "Resolved"
+};
 
 /**
  * Get all requests assigned to a technician
@@ -14,10 +18,18 @@ export const getAssignedRequests = async (req: Request, res: Response) => {
       [technicianId]
     );
 
-    res.status(200).json(rows);
+    res.status(200).json({
+      success: true,
+      data: rows,
+      message: "Assigned requests fetched successfully",
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error fetching assigned requests" });
+    res.status(500).json({
+      success: false,
+      data: null,
+      message: "Error fetching assigned requests",
+    });
   }
 };
 
@@ -30,35 +42,47 @@ export const updateRequestStatus = async (req: Request, res: Response) => {
     const { status } = req.body;
     const pool = getPool();
 
-    await pool.query("UPDATE requests SET status = ? WHERE id = ?", [
-      status,
-      requestId,
-    ]);
+    const [rows]: any = await pool.query(
+      "SELECT status FROM requests WHERE id = ?",
+      [requestId]
+    );
 
-    res.status(200).json({ message: "Status updated successfully" });
+    if (!rows.length) {
+      return res.status(404).json({
+        success: false,
+        data: null,
+        message: "Request not found"
+      });
+    }
+
+    const currentStatus = rows[0].status;
+    const allowedNextStatus = STATUS_FLOW[currentStatus];
+
+    if (allowedNextStatus !== status) {
+      return res.status(400).json({
+        success: false,
+        data: null,
+        message: `Invalid status transition from ${currentStatus} to ${status}`
+      });
+    }
+
+    await pool.query(
+      "UPDATE requests SET status = ? WHERE id = ?",
+      [status, requestId]
+    );
+
+    res.status(200).json({
+      success: true,
+      data: null,
+      message: "Status updated successfully"
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error updating status" });
+    res.status(500).json({
+      success: false,
+      data: null,
+      message: "Error updating status"
+    });
   }
 };
 
-/**
- * Add technician notes
- */
-export const addTechnicianNotes = async (req: Request, res: Response) => {
-  try {
-    const requestId = req.params.id;
-    const { notes } = req.body;
-    const pool = getPool();
-
-    await pool.query("UPDATE requests SET technician_notes = ? WHERE id = ?", [
-      notes,
-      requestId,
-    ]);
-
-    res.status(200).json({ message: "Notes added successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error adding notes" });
-  }
-};
