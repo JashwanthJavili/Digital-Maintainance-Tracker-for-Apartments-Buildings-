@@ -1,14 +1,22 @@
 import { Request, Response } from "express";
 import { getPool } from "../database";
+
+/**
+ * Allowed status transitions
+ */
 const STATUS_FLOW: Record<string, string> = {
   Assigned: "In-Progress",
-  "In-Progress": "Resolved"
+  "In-Progress": "Resolved",
 };
 
 /**
  * Get all requests assigned to a technician
+ * GET /api/technician/:id/requests
  */
-export const getAssignedRequests = async (req: Request, res: Response) => {
+export const getAssignedRequests = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   try {
     const technicianId = req.params.id;
     const pool = getPool();
@@ -18,14 +26,14 @@ export const getAssignedRequests = async (req: Request, res: Response) => {
       [technicianId]
     );
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data: rows,
       message: "Assigned requests fetched successfully",
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       data: null,
       message: "Error fetching assigned requests",
@@ -35,8 +43,12 @@ export const getAssignedRequests = async (req: Request, res: Response) => {
 
 /**
  * Update request status
+ * PUT /api/technician/requests/:id/status
  */
-export const updateRequestStatus = async (req: Request, res: Response) => {
+export const updateRequestStatus = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   try {
     const requestId = req.params.id;
     const { status } = req.body;
@@ -51,7 +63,7 @@ export const updateRequestStatus = async (req: Request, res: Response) => {
       return res.status(404).json({
         success: false,
         data: null,
-        message: "Request not found"
+        message: "Request not found",
       });
     }
 
@@ -62,27 +74,26 @@ export const updateRequestStatus = async (req: Request, res: Response) => {
       return res.status(400).json({
         success: false,
         data: null,
-        message: `Invalid status transition from ${currentStatus} to ${status}`
+        message: `Invalid status transition from ${currentStatus} to ${status}`,
       });
     }
 
-    await pool.query(
-      "UPDATE requests SET status = ? WHERE id = ?",
-      [status, requestId]
-    );
+    await pool.query("UPDATE requests SET status = ? WHERE id = ?", [
+      status,
+      requestId,
+    ]);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data: null,
-      message: "Status updated successfully"
+      message: "Status updated successfully",
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       data: null,
-      message: "Error updating status"
+      message: "Error updating status",
     });
   }
 };
-
