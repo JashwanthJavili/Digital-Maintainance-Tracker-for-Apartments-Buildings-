@@ -1,24 +1,17 @@
-import express, { Express, Request, Response } from 'express';
-import cors from 'cors';
-import { errorHandler } from './middlewares/errorHandler';
+import express, { Express, Request, Response } from "express";
+import residentRoutes from "./resident/routes/resident.routes";
 
 const app: Express = express();
 
-// Middleware
-app.use(cors());
+// Middlewares
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// Health check route
-app.get('/health', (_req: Request, res: Response) => {
-  res.status(200).json({
-    status: 'OK',
-    message: 'Server is running',
-    timestamp: new Date().toISOString(),
-  });
+// Routes
+app.use("/api/resident", residentRoutes);
+
+// Health check
+app.get("/", (_req: Request, res: Response) => {
+  res.send("Digital Maintenance Tracker API running");
 });
-
-// Global error handling middleware (MUST be last)
-app.use(errorHandler);
 
 export default app;
