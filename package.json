@@ -1,27 +1,16 @@
 {
-  "name": "matrimony-backend",
+  "name": "digital-maintenance-tracker",
   "version": "1.0.0",
-  "description": "Matrimony backend server",
-  "main": "dist/server.js",
+  "description": "Digital Maintenance Tracker for Apartments and Buildings",
   "scripts": {
-    "dev": "ts-node src/server.ts",
-    "build": "tsc",
-    "start": "node dist/server.js",
-    "watch": "tsc --watch"
-  },
-  "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "mysql2": "^3.6.5",
-    "jsonwebtoken": "^9.0.0"
+    "dev": "concurrently \"npm run backend\" \"npm run admin\" \"npm run resident\" \"npm run technician\"",
+    "backend": "cd backend && npm run dev",
+    "admin": "cd frontend/admin-frontend && npm start",
+    "resident": "cd frontend/resident-frontend && npm start",
+    "technician": "cd frontend/technician-frontend && npm start",
+    "install-all": "npm install && cd backend && npm install && cd ../frontend/admin-frontend && npm install && cd ../resident-frontend && npm install && cd ../technician-frontend && npm install"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21",
-    "@types/cors": "^2.8.17",
-    "@types/node": "^20.10.6",
-    "@types/jsonwebtoken": "^9.0.7",
-    "typescript": "^5.3.3",
-    "ts-node": "^10.9.2"
+    "concurrently": "^8.2.2"
   }
 }

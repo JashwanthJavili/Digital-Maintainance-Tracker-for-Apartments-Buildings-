@@ -8,7 +8,6 @@ export const getAllRequests = async (req: Request, res: Response) => {
       SELECT 
         r.id,
         r.category,
-        r.title,
         r.description,
         r.status,
         r.created_at,
@@ -79,12 +78,46 @@ export const updateStatus = async (req: Request, res: Response) => {
 // 4. Get all technicians
 export const getTechnicians = async (req: Request, res: Response) => {
   try {
-    const [rows] = await db.execute(
-      "SELECT id, name, email, contact_info FROM users WHERE role = 'Technician'"
+    const [rows]: any = await db.execute(
+      "SELECT id, name, contact_info FROM users WHERE role = 'Technician'"
     );
+
+    // Get active request count for each technician
+    const techniciansWithCount = await Promise.all(
+      rows.map(async (tech: any) => {
+        const [countResult]: any = await db.execute(
+          `SELECT COUNT(*) as active_count 
+           FROM requests 
+           WHERE technician_id = ? 
+           AND status IN ('Assigned', 'In-Progress')`,
+          [tech.id]
+        );
+
+        let specialization = '';
+        if (tech.contact_info) {
+          try {
+            const contactInfo = typeof tech.contact_info === 'string' 
+              ? JSON.parse(tech.contact_info) 
+              : tech.contact_info;
+            specialization = contactInfo.specialization || '';
+          } catch (e) {
+            specialization = '';
+          }
+        }
+
+        return {
+          id: tech.id,
+          name: tech.name,
+          specialization: specialization,
+          active_count: countResult[0].active_count,
+          display_name: `${tech.name} - ${specialization} (${countResult[0].active_count} active)`
+        };
+      })
+    );
+
     res.status(200).json({
       message: 'Technicians retrieved successfully',
-      data: rows
+      data: techniciansWithCount
     });
   } catch (error) {
     console.error('Error fetching technicians:', error);

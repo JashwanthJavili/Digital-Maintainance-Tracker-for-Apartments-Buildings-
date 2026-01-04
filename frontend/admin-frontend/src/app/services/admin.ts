@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AdminService {
 
-  private API_URL = 'http://localhost:3000/admin';
+  private API_URL = 'http://localhost:3000/api/admin';
 
   constructor(private http: HttpClient) {}
 
@@ -22,7 +22,7 @@ export class AdminService {
 
   // Assign technician
   assignTechnician(requestId: number, technicianId: number) {
-    return this.http.put(`${this.API_URL}/assign`, {
+    return this.http.post(`${this.API_URL}/assign`, {
       requestId,
       technicianId
     });
@@ -34,5 +34,24 @@ export class AdminService {
       requestId,
       status
     });
+  }
+  
+  // Generate user ID
+  generateUserId(role: string, mobile: string, roomNumber?: string) {
+    let url = `http://localhost:3000/api/users/generate-id?role=${role}&mobile=${mobile}`;
+    if (roomNumber) {
+      url += `&roomNumber=${roomNumber}`;
+    }
+    return this.http.get<any>(url);
+  }
+  
+  // Create new user
+  createUser(userData: any) {
+    return this.http.post<any>('http://localhost:3000/api/users', userData);
+  }
+
+  // Change password
+  changePassword(payload: any) {
+    return this.http.post<any>('http://localhost:3000/api/users/change-password', payload);
   }
 }

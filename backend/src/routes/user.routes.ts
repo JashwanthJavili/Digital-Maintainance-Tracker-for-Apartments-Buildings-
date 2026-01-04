@@ -6,6 +6,15 @@ const router = express.Router();
 // Get all users
 router.get('/', userController.getAllUsers);
 
+// Generate user ID
+router.get('/generate-id', userController.generateUserId);
+
+// Create new user
+router.post('/', userController.createUser);
+
+// Change password
+router.post('/change-password', userController.changePassword);
+
 // Get user by ID
 router.get('/:userId', userController.getUserById);
 
