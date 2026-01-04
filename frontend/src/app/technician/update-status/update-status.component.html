@@ -1,0 +1,9 @@
+<h2>Update Request Status</h2>
+
+<select [(ngModel)]="status">
+  <option value="In-Progress">In-Progress</option>
+  <option value="Resolved">Resolved</option>
+</select>
+
+<br /><br />
+<button (click)="submit()">Update Status</button>

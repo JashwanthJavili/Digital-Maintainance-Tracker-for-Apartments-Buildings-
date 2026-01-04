@@ -1,0 +1,18 @@
+<h2>Technician Dashboard</h2>
+
+<table border="1" cellpadding="8" *ngIf="requests.length > 0">
+  <tr>
+    <th>ID</th>
+    <th>Status</th>
+    <th>Action</th>
+  </tr>
+  <tr *ngFor="let req of requests">
+    <td>{{ req.id }}</td>
+    <td>{{ req.status }}</td>
+    <td>
+      <a [routerLink]="['/technician/update', req.id]">Update</a>
+    </td>
+  </tr>
+</table>
+
+<p *ngIf="requests.length === 0">No assigned requests found.</p>
