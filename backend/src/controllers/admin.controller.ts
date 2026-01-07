@@ -4,14 +4,18 @@ import { db } from '../config/db';
 // 1. View all maintenance requests
 export const getAllRequests = async (req: Request, res: Response) => {
   try {
-    const [rows] = await db.execute(`
+    const [rows]: any = await db.execute(`
       SELECT 
         r.id,
         r.category,
         r.description,
         r.status,
+        r.feedback_rating,
+        r.feedback_comments,
+        r.notes,
         r.created_at,
         u.name AS resident_name,
+        u.contact_info AS resident_contact_info,
         t.name AS technician_name
       FROM requests r
       JOIN users u ON r.resident_id = u.id
@@ -19,9 +23,27 @@ export const getAllRequests = async (req: Request, res: Response) => {
       ORDER BY r.created_at DESC
     `);
 
+    // Parse contact_info to extract room number
+    const processedRows = rows.map((row: any) => {
+      let resident_room = '';
+      if (row.resident_contact_info) {
+        try {
+          const contactInfo = JSON.parse(row.resident_contact_info);
+          resident_room = contactInfo.room_number || '';
+        } catch (e) {
+          // Backward compatibility - if parsing fails, use as is
+          resident_room = '';
+        }
+      }
+      return {
+        ...row,
+        resident_room
+      };
+    });
+
     res.status(200).json({
       message: 'Requests retrieved successfully',
-      data: rows
+      data: processedRows
     });
   } catch (error) {
     console.error('Error fetching requests:', error);

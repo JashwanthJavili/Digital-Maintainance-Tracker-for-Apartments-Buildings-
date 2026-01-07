@@ -75,11 +75,18 @@ export const updateRequestStatus = async (req: Request, res: Response) => {
       });
     }
 
-    // Update status
-    await db.execute(
-      'UPDATE requests SET status = ? WHERE id = ?',
-      [status, requestId]
-    );
+    // Update status and notes
+    if (notes) {
+      await db.execute(
+        'UPDATE requests SET status = ?, notes = ? WHERE id = ?',
+        [status, notes, requestId]
+      );
+    } else {
+      await db.execute(
+        'UPDATE requests SET status = ? WHERE id = ?',
+        [status, requestId]
+      );
+    }
 
     res.status(200).json({
       message: 'Request status updated successfully',

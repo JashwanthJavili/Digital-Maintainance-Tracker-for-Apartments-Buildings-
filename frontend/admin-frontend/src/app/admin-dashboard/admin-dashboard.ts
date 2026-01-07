@@ -36,10 +36,12 @@ export class AdminDashboardComponent implements OnInit {
 
 displayedColumns: string[] = [
   'id',
+  'room',
   'category',
   'description',
   'technician',
   'status',
+  'feedback',
   'action'
 ];
 

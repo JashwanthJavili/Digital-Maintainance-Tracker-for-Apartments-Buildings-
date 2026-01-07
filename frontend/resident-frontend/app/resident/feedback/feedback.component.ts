@@ -398,7 +398,8 @@ export class FeedbackComponent implements OnInit {
 
     this.isSubmitting = true;
     const payload = { 
-      feedback_rating: this.feedback.rating
+      feedback_rating: this.feedback.rating,
+      feedback_comments: this.feedback.comments || null
     };
 
     this.http.put(`http://localhost:3000/api/requests/${this.requestId}/feedback`, payload).subscribe({

@@ -158,6 +158,14 @@ import { RouterModule } from '@angular/router';
                 <div class="detail-section" *ngIf="!req.media">
                   <p class="no-image-text">No image attached to this request</p>
                 </div>
+                <div class="detail-section" *ngIf="req.status === 'Resolved' && !req.feedback_rating">
+                  <a [href]="'/resident/feedback/' + req.id" class="feedback-button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                    Submit Feedback
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -1022,6 +1030,31 @@ import { RouterModule } from '@angular/router';
     .submit-button:hover:not(:disabled) {
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(200, 152, 96, 0.4);
+    }
+
+    .feedback-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 28px;
+      background: linear-gradient(135deg, #D4A574 0%, #C89860 100%);
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(212, 165, 116, 0.2);
+    }
+
+    .feedback-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(212, 165, 116, 0.4);
+    }
+
+    .feedback-button svg {
+      width: 20px;
+      height: 20px;
     }
   `]
 })

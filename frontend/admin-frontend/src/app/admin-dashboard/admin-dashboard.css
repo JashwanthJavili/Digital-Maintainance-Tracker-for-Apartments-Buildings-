@@ -288,6 +288,24 @@
   font-weight: 600;
 }
 
+.room-cell {
+  text-align: center;
+  min-width: 80px;
+}
+
+.room-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+  color: #1976D2;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  border: 2px solid #90CAF9;
+  letter-spacing: 0.5px;
+}
+
+
 .description-cell {
   max-width: 300px;
   overflow: hidden;
@@ -399,6 +417,69 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
 }
+
+/* Feedback Column Styles */
+.feedback-cell {
+  min-width: 200px;
+  max-width: 250px;
+}
+
+.feedback-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rating-stars {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+
+.star-icon {
+  color: #E5D5B7;
+}
+
+.star-icon.filled {
+  color: #FFB300;
+}
+
+.rating-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #5D4E37;
+}
+
+.feedback-comment {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #8B7355;
+  font-style: italic;
+  padding: 6px 10px;
+  background: #FAF8F5;
+  border-radius: 6px;
+  border-left: 3px solid #D4A574;
+  margin-top: 4px;
+}
+
+.feedback-comment svg {
+  flex-shrink: 0;
+  color: #D4A574;
+}
+
+.no-feedback {
+  font-size: 13px;
+  color: #999;
+  font-style: italic;
+}
+
+.not-applicable {
+  color: #CCC;
+  font-size: 14px;
+}
+
 
 .assign-button:disabled {
   opacity: 0.5;

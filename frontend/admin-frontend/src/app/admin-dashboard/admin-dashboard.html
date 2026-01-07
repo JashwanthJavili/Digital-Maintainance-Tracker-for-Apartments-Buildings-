@@ -133,16 +133,21 @@
           <thead>
             <tr>
               <th>ID</th>
+              <th>Room</th>
               <th>Category</th>
               <th>Description</th>
               <th>Technician</th>
               <th>Status</th>
+              <th>Feedback</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let r of filteredRequests">
               <td class="id-cell">#{{ r.id }}</td>
+              <td class="room-cell">
+                <span class="room-badge">{{ r.resident_room || 'N/A' }}</span>
+              </td>
               <td>
                 <span class="category-badge">{{ r.category }}</span>
               </td>
@@ -166,6 +171,26 @@
                 <span [class]="'status-badge status-' + (r.status || 'new').toLowerCase().replace('-', '')">
                   {{ r.status }}
                 </span>
+              </td>
+              <td class="feedback-cell">
+                <div *ngIf="r.status === 'Resolved'">
+                  <div *ngIf="r.feedback_rating" class="feedback-info">
+                    <div class="rating-stars">
+                      <svg *ngFor="let star of [1,2,3,4,5]" class="star-icon" [class.filled]="star <= r.feedback_rating" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                      </svg>
+                    </div>
+                    <span class="rating-text">{{ r.feedback_rating }}/5</span>
+                    <div *ngIf="r.feedback_comments" class="feedback-comment" [title]="r.feedback_comments">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"></path>
+                      </svg>
+                      {{ r.feedback_comments.length > 30 ? r.feedback_comments.substring(0, 30) + '...' : r.feedback_comments }}
+                    </div>
+                  </div>
+                  <span *ngIf="!r.feedback_rating" class="no-feedback">No feedback yet</span>
+                </div>
+                <span *ngIf="r.status !== 'Resolved'" class="not-applicable">-</span>
               </td>
               <td>
                 <button

@@ -21,6 +21,8 @@ CREATE TABLE IF NOT EXISTS requests (
   media VARCHAR(255),
   status ENUM('New', 'Assigned', 'In-Progress', 'Resolved') DEFAULT 'New',
   feedback_rating INT,
+  feedback_comments TEXT,
+  notes TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (resident_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (technician_id) REFERENCES users(id) ON DELETE SET NULL

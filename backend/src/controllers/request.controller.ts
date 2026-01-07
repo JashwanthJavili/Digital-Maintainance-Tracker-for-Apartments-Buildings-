@@ -12,6 +12,7 @@ export const getAllRequests = async (req: Request, res: Response) => {
         r.media,
         r.status,
         r.feedback_rating,
+        r.feedback_comments,
         r.notes,
         r.created_at,
         u.name as resident_name,
@@ -95,6 +96,8 @@ export const getResidentRequests = async (req: Request, res: Response) => {
         r.media,
         r.status,
         r.feedback_rating,
+        r.feedback_comments,
+        r.notes,
         r.created_at,
         u.name as technician_name
       FROM requests r
@@ -226,7 +229,7 @@ export const updateRequestStatus = async (req: Request, res: Response) => {
 export const submitFeedback = async (req: Request, res: Response) => {
   try {
     const { requestId } = req.params;
-    const { feedback_rating } = req.body;
+    const { feedback_rating, feedback_comments } = req.body;
 
     // Feedback rating is optional, but if provided must be in range (1-5)
     if (feedback_rating !== null && feedback_rating !== undefined) {
@@ -247,10 +250,10 @@ export const submitFeedback = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Request not found' });
     }
 
-    // Optional field: feedback_rating supports null values
+    // Update feedback rating and comments
     await db.execute(
-      'UPDATE requests SET feedback_rating = ? WHERE id = ?',
-      [feedback_rating || null, requestId]
+      'UPDATE requests SET feedback_rating = ?, feedback_comments = ? WHERE id = ?',
+      [feedback_rating || null, feedback_comments || null, requestId]
     );
 
     res.status(200).json({
